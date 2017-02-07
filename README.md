@@ -52,4 +52,4 @@ Example of execution:
 ## Language Code
 For all language parameters (`--from`, `--to`), ISO 639-1 language code is used. (except chinese, `zh-tw` for Traditional Chinese, `zh-cn` for Simplified Chinese)
 
-Reference: [https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes]()
+Reference: [https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
