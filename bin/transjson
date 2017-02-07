@@ -1,8 +1,12 @@
+#!/usr/bin/env node
+
+'use strict';
+
 const fs = require('fs-extra');
 const program = require('commander');
 const translator = require('translateer');
 const ora = require('ora');
-const config = require('./package.json');
+const config = require('../package.json');
 const { version = '0.0.0' } = config;
 
 const progress = {

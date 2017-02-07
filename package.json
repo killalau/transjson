@@ -1,8 +1,10 @@
 {
   "name": "transjson",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "JSON translation tool, CLI tool for i18n configure translation.",
-  "main": "index.js",
+  "bin": {
+    "transjson": "bin/transjson"
+  },
   "repository": {
     "url": "https://github.com/killalau/transjson.git",
     "type": "git"
