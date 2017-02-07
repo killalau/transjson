@@ -1,6 +1,6 @@
 {
   "name": "transjson",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "JSON translation tool, CLI tool for i18n configure translation.",
   "bin": {
     "transjson": "bin/transjson"

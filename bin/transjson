@@ -59,9 +59,6 @@ program
     .arguments('<inputFile> <outputFile>')
     .action((inputFile, outputFile) => {
         try {
-            if (!inputFile) throw Error('Input file is not specify');
-            if (!outputFile) throw Error('Output file is not specify');
-
             const { from, to } = program;
             const inputObj = fs.readJsonSync(inputFile);
             progress.tick();
