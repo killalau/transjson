@@ -6,15 +6,14 @@ const fs = require('fs-extra');
 const program = require('commander');
 const translator = require('translateer');
 const ora = require('ora');
-const config = require('../package.json');
-const { version = '0.0.0' } = config;
+const { version = '0.0.0' } = require('../package.json');
 
+// Progress spinner
 const progress = {
     _spinner: null,
-    counter: -1,
+    counter: 0,
     get spinner() {
-        this._spinner = this._spinner || ora().start();
-        return this._spinner;
+        return this._spinner = this._spinner || ora().start();
     },
     tick: function () {
         this.spinner.text = `${++this.counter} words translated`;
@@ -27,18 +26,13 @@ const progress = {
     },
 };
 
-function t(q, from, to) {
-    progress.tick();
-    return translator.translate({ q, from, to }).then(res => res.json());
-}
-
+// Travel the JSON tree and translate the leaf node
 function travel(input, from, to) {
-    let ret;
     if (typeof input === 'string') {
-        ret = t(input, from, to);
+        progress.tick();
+        return translator.translate({ q: input, from, to }).then(res => res.json());
     } else if (typeof input === 'object' && !(input instanceof Date)) {
-        const keys = Object.keys(input);
-        ret = Object.keys(input).reduce((promise, key) => {
+        return Object.keys(input).reduce((promise, key) => {
             return promise.then(obj => {
                 return travel(input[key], from, to).then(tResult => {
                     obj[key] = tResult;
@@ -47,11 +41,16 @@ function travel(input, from, to) {
             });
         }, Promise.resolve({}));
     } else {
-        ret = Promise.resolve(input);
+        return Promise.resolve(input);
     }
-    return ret;
 }
 
+function programTerminate(err) {
+    progress.terminate(err);
+    process.exit(1);
+}
+
+// Main program
 program
     .version(version)
     .option('-f, --from <fromLang>', 'from language, default is auto detect')
@@ -59,18 +58,13 @@ program
     .arguments('<inputFile> <outputFile>')
     .action((inputFile, outputFile) => {
         try {
-            const { from, to } = program;
-            const inputObj = fs.readJsonSync(inputFile);
-            progress.tick();
-            travel(inputObj, from, to)
+            travel(fs.readJsonSync(inputFile), program.from, program.to)
                 .then(obj => {
                     fs.writeJsonSync(outputFile, obj);
                     progress.done();
-                });
-        } catch (err) {
-            progress.terminate(err);
-            process.exit(1);
-        }
+                })
+                .catch(programTerminate);
+        } catch (err) { programTerminate(err) }
     });
 
 program.parse(process.argv);
